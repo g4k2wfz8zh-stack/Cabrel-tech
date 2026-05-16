@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🃏 HARLEY SPACE — Bot WhatsApp by CABREL-TECH</title>
+<meta name="description" content="Collectionnez vos coins, créez votre serveur et générez votre code de pairage WhatsApp HARLEY QUINN BOTv1. Développé par CABREL-TECH." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --red:#e10a3b;
+    --red-soft:#ff2a5e;
+    --pink:#ff3ea5;
+    --black:#0a0a0f;
+    --black-2:#13131c;
+    --gold:#ffd166;
+    --green:#39ff14;
+    --txt:#f5f5f7;
+  }
+  html,body{ background:var(--black); color:var(--txt); font-family:'Poppins',sans-serif; min-height:100vh; overflow-x:hidden; }
+
+  /* === Background === */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-2;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(225,10,59,.25), transparent 45%),
+      radial-gradient(circle at 85% 75%, rgba(255,62,165,.20), transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(57,255,20,.05), transparent 60%),
+      linear-gradient(135deg,#0a0a0f 0%, #13131c 50%, #1a0a14 100%);
+  }
+  body::after{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 2px, transparent 2px 12px);
+    opacity:.6;
+  }
+
+  /* Floating cards */
+  .floating-cards{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+  .floating-cards span{
+    position:absolute; font-size:32px; opacity:.07;
+    animation:floatCard 20s linear infinite;
+  }
+  @keyframes floatCard{
+    0%{ transform:translateY(110vh) rotate(0deg); opacity:0; }
+    10%{ opacity:.1; }
+    90%{ opacity:.1; }
+    100%{ transform:translateY(-20vh) rotate(720deg); opacity:0; }
+  }
+
+  /* === Navbar === */
+  nav{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter: blur(12px);
+    background:rgba(10,10,15,.7);
+    border-bottom:1px solid rgba(225,10,59,.3);
+    padding:14px 24px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo{ display:flex; align-items:center; gap:10px; cursor:pointer; }
+  .logo .joker-icon{
+    width:40px; height:40px; border-radius:50%;
+    background:radial-gradient(circle, var(--red) 0%, #6a0020 100%);
+    display:grid; place-items:center;
+    font-size:22px;
+    box-shadow:0 0 18px var(--red), inset 0 0 8px rgba(0,0,0,.4);
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ box-shadow:0 0 14px var(--red); }
+    50%{ box-shadow:0 0 30px var(--red-soft), 0 0 60px rgba(255,62,165,.3); }
+  }
+  .logo-text{ font-family:'Creepster',cursive; font-size:24px; letter-spacing:1px;
+    background:linear-gradient(90deg,var(--red),var(--pink),var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .logo-text small{ display:block; font-family:'Poppins',sans-serif; font-size:9px; letter-spacing:3px; color:#888; -webkit-text-fill-color:#888; }
+  .nav-links{ display:flex; gap:22px; align-items:center; }
+  .nav-links a{ color:#ccc; text-decoration:none; font-size:14px; font-weight:500; transition:.3s; cursor:pointer; }
+  .nav-links a:hover{ color:var(--red-soft); text-shadow:0 0 8px var(--red); }
+  .coin-display{
+    display:flex; align-items:center; gap:6px;
+    background:rgba(255,209,102,.12); border:1px solid rgba(255,209,102,.4);
+    padding:6px 14px; border-radius:30px; font-size:13px; color:var(--gold); font-weight:700;
+  }
+  .coin-display .coin-icon{ font-size:16px; animation:spin 3s linear infinite; display:inline-block; }
+  @keyframes spin{ from{ transform:rotateY(0); } to{ transform:rotateY(360deg); } }
+  @media(max-width:640px){ .nav-links a:not(.coin-display){ display:none; } }
+
+  /* === PAGES === */
+  .page{ display:none; animation:fadeIn .5s ease; }
+  .page.active{ display:block; }
+  @keyframes fadeIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+
+  /* === HOME PAGE === */
+  .welcome-hero{
+    min-height:90vh; display:flex; align-items:center; justify-content:center;
+    padding:60px 24px; text-align:center;
+  }
+  .welcome-content{ max-width:900px; }
+  .welcome-content .welcome-emoji{
+    font-size:80px; margin-bottom:14px;
+    filter:drop-shadow(0 0 30px var(--red));
+    animation:bounce-emoji 2s ease-in-out infinite;
+  }
+  @keyframes bounce-emoji{
+    0%,100%{ transform:translateY(0) rotate(-5deg); }
+    50%{ transform:translateY(-15px) rotate(5deg); }
+  }
+  .welcome-content h1{
+    font-family:'Creepster',cursive;
+    font-size:clamp(38px,7vw,76px); line-height:1;
+    background:linear-gradient(135deg,#fff 0%, var(--red) 35%, var(--pink) 65%, var(--gold) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    letter-spacing:2px;
+    text-shadow:0 0 50px rgba(225,10,59,.4);
+    margin-bottom:14px;
+  }
+  .welcome-content .tagline{
+    font-family:'Creepster',cursive;
+    font-size:clamp(20px,3vw,32px);
+    color:var(--gold); letter-spacing:2px; margin-bottom:24px;
+    text-shadow:0 0 20px rgba(255,209,102,.5);
+  }
+  .welcome-content p.intro{
+    font-size:16px; color:#ddd; line-height:1.7; margin-bottom:30px;
+    max-width:700px; margin-left:auto; margin-right:auto;
+  }
+  .welcome-content p.intro b{ color:var(--pink); }
+
+  .journey-steps{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px; margin:30px 0;
+  }
+  .journey-step{
+    background:rgba(20,20,30,.6); border:1px solid rgba(225,10,59,.3);
+    border-radius:16px; padding:22px 16px; position:relative;
+    transition:.3s;
+  }
+  .journey-step:hover{ transform:translateY(-5px); border-color:var(--red-soft); box-shadow:0 15px 35px rgba(225,10,59,.25); }
+  .journey-step .num{
+    width:36px; height:36px; border-radius:50%;
+    background:linear-gradient(135deg,var(--red),var(--pink));
+    display:grid; place-items:center; font-weight:800; color:#fff;
+    margin:0 auto 12px; box-shadow:0 5px 15px rgba(225,10,59,.4);
+  }
+  .journey-step .step-icon{ font-size:32px; margin-bottom:8px; }
+  .journey-step h4{ font-size:15px; color:#fff; margin-bottom:6px; }
+  .journey-step p{ font-size:12px; color:#aaa; line-height:1.5; }
+
+  .btn-primary{
+    padding:16px 36px;
+    background:linear-gradient(135deg, var(--red), var(--pink));
+    color:#fff; border:none; border-radius:14px; font-size:16px; font-weight:700;
+    letter-spacing:1px; cursor:pointer; transition:.3s;
+    box-shadow:0 8px 24px rgba(225,10,59,.4);
+    display:inline-flex; align-items:center; gap:10px;
+    text-transform:uppercase; font-family:'Poppins';
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 12px 30px rgba(225,10,59,.6); }
+  .btn-primary:disabled{ opacity:.6; cursor:not-allowed; transform:none; }
+
+  /* === COINS PAGE === */
+  .coins-section{
+    min-height:88vh; padding:50px 24px; display:flex; align-items:center; justify-content:center;
+  }
+  .coins-wrap{ max-width:900px; width:100%; text-align:center; }
+  .coins-wrap h2{
+    font-family:'Creepster',cursive; font-size:clamp(34px,5vw,54px);
+    background:linear-gradient(90deg,var(--gold),var(--red),var(--pink));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    letter-spacing:2px; margin-bottom:10px;
+  }
+  .coins-wrap .subtitle{ color:#bbb; margin-bottom:30px; font-size:15px; }
+
+  .progress-wrap{
+    background:rgba(20,20,30,.7); border:1px solid rgba(255,209,102,.3);
+    border-radius:20px; padding:26px; margin-bottom:30px;
+    box-shadow:0 15px 40px rgba(0,0,0,.4);
+  }
+  .progress-label{
+    display:flex; justify-content:space-between; margin-bottom:12px;
+    font-size:13px; color:#ccc; letter-spacing:1px;
+  }
+  .progress-label .count{ color:var(--gold); font-weight:800; font-size:16px; }
+  .progress-bar{
+    height:22px; background:rgba(0,0,0,.5); border-radius:30px;
+    overflow:hidden; position:relative;
+    border:1px solid rgba(255,209,102,.2);
+  }
+  .progress-fill{
+    height:100%; width:0%;
+    background:linear-gradient(90deg, var(--gold), var(--red), var(--pink));
+    border-radius:30px; transition:width .5s ease;
+    box-shadow:0 0 20px rgba(255,209,102,.6);
+    position:relative;
+  }
+  .progress-fill::after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
+    animation:shine 2s linear infinite;
+  }
+  @keyframes shine{
+    0%{ transform:translateX(-100%); }
+    100%{ transform:translateX(100%); }
+  }
+
+  .coin-collector{
+    background:linear-gradient(160deg, rgba(20,20,30,.95), rgba(30,10,20,.95));
+    border:1px solid rgba(255,209,102,.4);
+    border-radius:24px; padding:40px 30px; margin-bottom:24px;
+    position:relative; overflow:hidden;
+  }
+  .big-coin{
+    width:160px; height:160px; margin:0 auto 24px;
+    border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, #ffe680, #ffd166 40%, #b8860b 100%);
+    display:grid; place-items:center;
+    font-size:80px; cursor:pointer;
+    box-shadow:
+      0 0 50px rgba(255,209,102,.6),
+      inset 0 -10px 20px rgba(0,0,0,.3),
+      inset 0 5px 10px rgba(255,255,255,.3);
+    transition:transform .15s ease;
+    user-select:none;
+    animation:coin-float 3s ease-in-out infinite;
+    border:6px solid #fff8dc;
+  }
+  .big-coin:hover{ transform:scale(1.05) rotateY(15deg); }
+  .big-coin:active{ transform:scale(.92); }
+  .big-coin.collected{
+    animation:coin-collected .6s ease;
+  }
+  @keyframes coin-float{
+    0%,100%{ transform:translateY(0) rotateY(0deg); }
+    50%{ transform:translateY(-10px) rotateY(180deg); }
+  }
+  @keyframes coin-collected{
+    0%{ transform:scale(1); }
+    40%{ transform:scale(1.3) rotateZ(20deg); box-shadow:0 0 80px var(--gold); }
+    100%{ transform:scale(1); }
+  }
+
+  .coin-instruction{
+    font-size:14px; color:#ddd; margin-bottom:12px;
+  }
+  .coin-instruction b{ color:var(--gold); }
+
+  /* Floating +1 animation */
+  .plus-one{
+    position:absolute; font-size:34px; font-weight:800; color:var(--gold);
+    text-shadow:0 0 15px var(--gold);
+    pointer-events:none; animation:plusOne 1s ease forwards;
+    font-family:'Creepster',cursive;
+  }
+  @keyframes plusOne{
+    0%{ opacity:0; transform:translateY(0) scale(.5); }
+    20%{ opacity:1; transform:translateY(-30px) scale(1.2); }
+    100%{ opacity:0; transform:translateY(-100px) scale(.8); }
+  }
+
+  /* === SERVER PAGE === */
+  .server-section{
+    min-height:88vh; padding:50px 24px; display:flex; align-items:center; justify-content:center;
+  }
+  .server-wrap{ max-width:700px; width:100%; }
+  .server-card{
+    background:linear-gradient(160deg, rgba(20,20,30,.95), rgba(30,10,20,.95));
+    border:1px solid rgba(57,255,20,.3);
+    border-radius:24px; padding:40px 30px; text-align:center;
+    box-shadow:0 25px 60px rgba(0,0,0,.6), 0 0 80px rgba(57,255,20,.1);
+  }
+  .server-icon-big{
+    width:100px; height:100px; margin:0 auto 20px;
+    border-radius:24px;
+    background:linear-gradient(135deg, var(--green), #1a8c0a);
+    display:grid; place-items:center; font-size:48px; color:#fff;
+    box-shadow:0 0 40px rgba(57,255,20,.5);
+    animation:pulse-green 2s ease-in-out infinite;
+  }
+  @keyframes pulse-green{
+    0%,100%{ box-shadow:0 0 30px rgba(57,255,20,.5); }
+    50%{ box-shadow:0 0 60px rgba(57,255,20,.8); }
+  }
+  .server-card h2{
+    font-family:'Creepster',cursive; font-size:38px;
+    background:linear-gradient(90deg,var(--green),#fff,var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    letter-spacing:2px; margin-bottom:10px;
+  }
+  .server-card .desc{ color:#bbb; margin-bottom:28px; font-size:14px; }
+
+  .server-config{
+    background:rgba(0,0,0,.4); border:1px dashed rgba(57,255,20,.3);
+    border-radius:14px; padding:18px; margin-bottom:20px; text-align:left;
+  }
+  .server-config .row{
+    display:flex; justify-content:space-between; padding:6px 0;
+    border-bottom:1px dashed rgba(255,255,255,.05); font-size:13px;
+  }
+  .server-config .row:last-child{ border:none; }
+  .server-config .row span:first-child{ color:#888; }
+  .server-config .row span:last-child{ color:var(--green); font-weight:600; font-family:'Courier New',monospace; }
+
+  .server-creation-log{
+    background:#000; border:1px solid rgba(57,255,20,.2);
+    border-radius:10px; padding:16px; margin:20px 0;
+    font-family:'Courier New',monospace; font-size:12px;
+    text-align:left; min-height:140px; max-height:200px; overflow-y:auto;
+    display:none;
+  }
+  .server-creation-log.show{ display:block; }
+  .server-creation-log .log-line{ margin:3px 0; color:#ccc; }
+  .server-creation-log .log-line .tag{ color:var(--green); font-weight:700; }
+  .server-creation-log .log-line .err{ color:var(--red-soft); }
+  .server-creation-log .log-line .info{ color:#6cf; }
+
+  .success-badge{
+    background:rgba(57,255,20,.15); border:2px solid var(--green);
+    color:#a8ffb1; padding:16px; border-radius:14px; font-size:15px;
+    margin:20px 0; display:none; animation:slideUp .5s ease;
+    font-weight:700;
+  }
+  .success-badge.show{ display:block; }
+  .success-badge i{ font-size:22px; margin-right:8px; vertical-align:middle; }
+
+  /* === PAIR PAGE (existing card) === */
+  .hero{
+    min-height:88vh; display:flex; align-items:center; justify-content:center;
+    padding:50px 24px 40px; position:relative;
+  }
+  .hero-content{ max-width:1200px; display:grid; grid-template-columns:1.1fr 1fr; gap:50px; align-items:center; width:100%; }
+  @media(max-width:900px){ .hero-content{ grid-template-columns:1fr; text-align:center; } }
+
+  .hero-left h1{
+    font-family:'Creepster',cursive;
+    font-size:clamp(42px,6vw,76px); line-height:.95;
+    background:linear-gradient(135deg,#fff 0%, var(--red) 40%, var(--pink) 70%, var(--gold) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    letter-spacing:2px;
+    text-shadow:0 0 50px rgba(225,10,59,.4);
+    margin-bottom:16px;
+  }
+  .hero-left .subtitle{
+    font-size:17px; color:#ddd; margin-bottom:10px;
+    font-weight:300;
+  }
+  .hero-left .subtitle b{ color:var(--gold); font-weight:600; }
+  .badges{ display:flex; flex-wrap:wrap; gap:10px; margin:22px 0; }
+  @media(max-width:900px){ .badges{ justify-content:center; } }
+  .badge{
+    background:rgba(225,10,59,.12); border:1px solid rgba(225,10,59,.4);
+    color:#ffb3c4; padding:6px 14px; border-radius:30px; font-size:12px; font-weight:500;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .badge.green{ background:rgba(57,255,20,.1); border-color:rgba(57,255,20,.4); color:#a8ffb1; }
+  .badge.gold{ background:rgba(255,209,102,.1); border-color:rgba(255,209,102,.4); color:#ffe39a; }
+
+  .feature-list{ list-style:none; margin-top:18px; }
+  .feature-list li{ padding:8px 0; color:#bbb; font-size:14px; display:flex; align-items:center; gap:10px; }
+  .feature-list li i{ color:var(--red-soft); }
+
+  /* === Card === */
+  .card{
+    background:linear-gradient(160deg, rgba(20,20,30,.95), rgba(30,10,20,.95));
+    border:1px solid rgba(225,10,59,.4);
+    border-radius:24px;
+    padding:36px 30px;
+    position:relative;
+    box-shadow:
+      0 25px 60px rgba(0,0,0,.6),
+      0 0 80px rgba(225,10,59,.15),
+      inset 0 1px 0 rgba(255,255,255,.04);
+    backdrop-filter: blur(8px);
+  }
+  .card-header{ text-align:center; margin-bottom:24px; }
+  .card-header .icon-big{
+    width:70px; height:70px; margin:0 auto 14px;
+    background:radial-gradient(circle, var(--red), #4a0015);
+    border-radius:50%; display:grid; place-items:center;
+    font-size:32px; color:#fff;
+    box-shadow:0 0 30px var(--red);
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  .card-header h2{ font-family:'Creepster',cursive; font-size:30px; color:#fff; letter-spacing:1.5px; }
+  .card-header p{ color:#999; font-size:13px; margin-top:6px; }
+
+  .server-tag{
+    background:rgba(57,255,20,.08); border:1px solid rgba(57,255,20,.3);
+    border-radius:10px; padding:10px 14px; margin-bottom:16px;
+    font-size:11px; color:#a8ffb1; font-family:'Courier New',monospace;
+    display:flex; align-items:center; gap:8px;
+  }
+  .server-tag .dot{
+    width:8px; height:8px; border-radius:50%; background:var(--green);
+    box-shadow:0 0 10px var(--green); animation:blink 1.5s infinite;
+  }
+  @keyframes blink{ 0%,100%{ opacity:1;} 50%{opacity:.3;} }
+
+  .input-group{ margin-bottom:18px; }
+  .input-group label{
+    display:block; font-size:12px; color:#aaa; margin-bottom:8px; letter-spacing:1px; text-transform:uppercase;
+  }
+  .phone-input{
+    display:flex; align-items:center; gap:0; background:rgba(0,0,0,.5);
+    border:1px solid rgba(225,10,59,.4); border-radius:14px; overflow:hidden;
+    transition:.3s;
+  }
+  .phone-input:focus-within{ border-color:var(--red-soft); box-shadow:0 0 0 4px rgba(225,10,59,.15); }
+  .phone-input .prefix{
+    padding:14px 16px; background:rgba(225,10,59,.15); color:var(--gold);
+    font-weight:600; border-right:1px solid rgba(225,10,59,.4);
+    display:flex; align-items:center; gap:6px;
+  }
+  .phone-input input{
+    flex:1; background:transparent; border:none; outline:none; color:#fff;
+    padding:14px 16px; font-size:16px; font-family:'Poppins'; letter-spacing:.5px;
+  }
+  .phone-input input::placeholder{ color:#555; }
+
+  .hint{
+    background:rgba(255,209,102,.08); border:1px solid rgba(255,209,102,.25);
+    padding:10px 14px; border-radius:10px; font-size:12px; color:#ffd98a;
+    margin-bottom:18px; display:flex; gap:10px; align-items:flex-start;
+  }
+  .hint i{ margin-top:2px; }
+
+  .btn-generate{
+    width:100%; padding:16px;
+    background:linear-gradient(135deg, var(--red), var(--pink));
+    color:#fff; border:none; border-radius:14px; font-size:16px; font-weight:700;
+    letter-spacing:1px; cursor:pointer; transition:.3s;
+    box-shadow:0 8px 24px rgba(225,10,59,.4);
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    text-transform:uppercase; font-family:'Poppins';
+  }
+  .btn-generate:hover{ transform:translateY(-2px); box-shadow:0 12px 30px rgba(225,10,59,.6); }
+  .btn-generate:disabled{ opacity:.7; cursor:not-allowed; }
+
+  /* Bot generation log */
+  .bot-log{
+    background:#000; border:1px solid rgba(57,255,20,.2);
+    border-radius:10px; padding:14px; margin-top:16px;
+    font-family:'Courier New',monospace; font-size:11.5px;
+    text-align:left; min-height:90px; max-height:160px; overflow-y:auto;
+    display:none;
+  }
+  .bot-log.show{ display:block; }
+  .bot-log .log-line{ margin:2px 0; color:#ccc; }
+  .bot-log .tag{ color:var(--green); }
+  .bot-log .ubuntu{ color:#e95420; font-weight:700; }
+  .bot-log .chrome{ color:#4285f4; font-weight:700; }
+
+  /* Result */
+  .result{
+    margin-top:22px; padding:22px;
+    background:linear-gradient(135deg, rgba(57,255,20,.08), rgba(225,10,59,.08));
+    border:1px dashed rgba(57,255,20,.4); border-radius:14px;
+    text-align:center; display:none; animation:slideUp .5s ease;
+  }
+  @keyframes slideUp{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+  .result.show{ display:block; }
+  .result .label{ font-size:12px; color:#a8ffb1; letter-spacing:2px; text-transform:uppercase; }
+  .result .code{
+    font-family:'Courier New',monospace; font-size:38px; font-weight:800;
+    color:#fff; letter-spacing:6px; margin:12px 0;
+    text-shadow:0 0 20px var(--green);
+    background:linear-gradient(90deg, var(--green), #fff, var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .result .copy-btn{
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2);
+    color:#fff; padding:8px 18px; border-radius:8px; cursor:pointer; font-size:13px;
+    transition:.3s;
+  }
+  .result .copy-btn:hover{ background:rgba(57,255,20,.15); border-color:var(--green); }
+  .steps{ text-align:left; margin-top:18px; font-size:12px; color:#ccc; line-height:1.7; }
+  .steps b{ color:var(--gold); }
+
+  .loader{ display:none; gap:6px; }
+  .loader.show{ display:flex; }
+  .loader span{
+    width:10px; height:10px; border-radius:50%; background:#fff;
+    animation:bounce 1.2s infinite;
+  }
+  .loader span:nth-child(2){ animation-delay:.2s; }
+  .loader span:nth-child(3){ animation-delay:.4s; }
+  @keyframes bounce{
+    0%,80%,100%{ transform:scale(.6); opacity:.5; }
+    40%{ transform:scale(1); opacity:1; }
+  }
+
+  /* === Features Section === */
+  section.features{ padding:60px 24px; max-width:1200px; margin:0 auto; }
+  .section-title{ text-align:center; margin-bottom:50px; }
+  .section-title h2{
+    font-family:'Creepster',cursive; font-size:48px;
+    background:linear-gradient(90deg,var(--red),var(--pink),var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    letter-spacing:2px;
+  }
+  .section-title p{ color:#888; margin-top:8px; }
+  .features-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; }
+  .feature-card{
+    background:rgba(20,20,30,.6); border:1px solid rgba(225,10,59,.2);
+    border-radius:18px; padding:26px; transition:.4s;
+    backdrop-filter:blur(6px);
+  }
+  .feature-card:hover{
+    transform:translateY(-6px); border-color:var(--red-soft);
+    box-shadow:0 20px 50px rgba(225,10,59,.25);
+  }
+  .feature-card .icon{
+    width:50px; height:50px; border-radius:12px;
+    background:linear-gradient(135deg, var(--red), var(--pink));
+    display:grid; place-items:center; font-size:20px; color:#fff; margin-bottom:14px;
+    box-shadow:0 5px 15px rgba(225,10,59,.4);
+  }
+  .feature-card h3{ font-size:17px; margin-bottom:8px; color:#fff; }
+  .feature-card p{ color:#999; font-size:13px; line-height:1.6; }
+
+  /* === Footer === */
+  footer{
+    text-align:center; padding:40px 20px;
+    border-top:1px solid rgba(225,10,59,.2);
+    background:rgba(0,0,0,.5);
+  }
+  footer .joker-mark{
+    font-family:'Creepster',cursive; font-size:28px;
+    background:linear-gradient(90deg,var(--red),var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    margin-bottom:8px;
+  }
+  footer p{ color:#777; font-size:13px; margin:6px 0; }
+  footer .dev{ color:var(--gold); font-weight:600; letter-spacing:1px; }
+  footer .social{ margin-top:14px; display:flex; gap:14px; justify-content:center; }
+  footer .social a{
+    width:38px; height:38px; border-radius:50%;
+    background:rgba(225,10,59,.15); border:1px solid rgba(225,10,59,.3);
+    display:grid; place-items:center; color:#fff; transition:.3s; text-decoration:none;
+  }
+  footer .social a:hover{ background:var(--red); transform:translateY(-3px); }
+
+  /* Toast */
+  .toast{
+    position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px);
+    background:rgba(20,20,30,.95); border:1px solid var(--green);
+    color:#fff; padding:14px 22px; border-radius:12px; font-size:14px;
+    box-shadow:0 10px 30px rgba(0,0,0,.5); z-index:200;
+    transition:.4s; opacity:0;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* Error */
+  .error-msg{
+    background:rgba(225,10,59,.15); border:1px solid var(--red);
+    color:#ffb3c4; padding:12px; border-radius:10px; font-size:13px;
+    margin-top:12px; display:none;
+  }
+  .error-msg.show{ display:block; animation:slideUp .3s; }
+
+  /* Locked overlay */
+  .locked{
+    background:rgba(225,10,59,.1); border:1px dashed rgba(225,10,59,.4);
+    color:#ffb3c4; padding:14px; border-radius:12px; font-size:13px;
+    margin-bottom:18px; text-align:center;
+  }
+  .locked i{ margin-right:6px; }
+</style>
+</head>
+<body>
+
+<div class="floating-cards">
+  <span style="left:5%; animation-delay:0s;">🃏</span>
+  <span style="left:15%; animation-delay:3s;">♠️</span>
+  <span style="left:30%; animation-delay:6s;">🃑</span>
+  <span style="left:45%; animation-delay:9s;">♦️</span>
+  <span style="left:60%; animation-delay:12s;">🃏</span>
+  <span style="left:75%; animation-delay:15s;">♣️</span>
+  <span style="left:90%; animation-delay:18s;">🔪</span>
+</div>
+
+<nav>
+  <div class="logo" onclick="goPage('home')">
+    <div class="joker-icon">🃏</div>
+    <div class="logo-text">HARLEY SPACE<small>by CABREL-TECH</small></div>
+  </div>
+  <div class="nav-links">
+    <a onclick="goPage('home')"><i class="fas fa-home"></i> Accueil</a>
+    <a onclick="goPage('coins')"><i class="fas fa-coins"></i> Coins</a>
+    <a onclick="goPage('server')"><i class="fas fa-server"></i> Serveur</a>
+    <a onclick="goPage('pair')"><i class="fas fa-key"></i> Code</a>
+    <span class="coin-display"><span class="coin-icon">🪙</span> <span id="coinCount">0</span>/10</span>
+  </div>
+</nav>
+
+<!-- ============ PAGE 1 : HOME / WELCOME ============ -->
+<div class="page active" id="page-home">
+  <section class="welcome-hero">
+    <div class="welcome-content">
+      <div class="welcome-emoji">🃏</div>
+      <h1>BIENVENUE CHEZ<br>CABREL-TECH</h1>
+      <div class="tagline">✦ DEV-DIGITAL ✦</div>
+      <p class="intro">
+        Bienvenue dans l'univers <b>HARLEY SPACE</b> — le bot WhatsApp signé <b>CABREL-TECH</b>.<br>
+        Suis les 3 étapes pour activer ton bot : <b>collectionne tes coins</b>, <b>crée ton serveur</b>, puis <b>récupère ton code de pairage</b>. ✨
+      </p>
+
+      <div class="journey-steps">
+        <div class="journey-step">
+          <div class="num">1</div>
+          <div class="step-icon">🪙</div>
+          <h4>Collectionne 10 coins</h4>
+          <p>Clique sur la pièce gratuitement jusqu'à atteindre 10 coins.</p>
+        </div>
+        <div class="journey-step">
+          <div class="num">2</div>
+          <div class="step-icon">🖥️</div>
+          <h4>Crée ton serveur</h4>
+          <p>Utilise tes coins pour activer ton serveur HARLEY (Ubuntu Chrome v24.0).</p>
+        </div>
+        <div class="journey-step">
+          <div class="num">3</div>
+          <div class="step-icon">🔑</div>
+          <h4>Obtiens ton code</h4>
+          <p>Entre ton numéro WhatsApp, le bot génère ton code de pairage instantanément.</p>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="goPage('coins')">
+        <i class="fas fa-rocket"></i> Commencer maintenant
+      </button>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PAGE 2 : COINS ============ -->
+<div class="page" id="page-coins">
+  <section class="coins-section">
+    <div class="coins-wrap">
+      <h2>🪙 Collectionne tes 10 Coins</h2>
+      <p class="subtitle">Clique sur la pièce d'or pour collecter <b style="color:var(--gold)">1 coin gratuit</b> à chaque clic. Tu as besoin de <b style="color:var(--gold)">10 coins</b> pour créer ton serveur.</p>
+
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span>Progression</span>
+          <span><span class="count" id="progressCount">0</span> / 10 coins</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <div class="coin-collector" id="coinBox">
+        <div class="big-coin" id="bigCoin" onclick="collectCoin(event)">🪙</div>
+        <div class="coin-instruction">
+          Clique sur la pièce pour collecter <b>+1 coin</b> 💛<br>
+          <span style="color:#888; font-size:12px;">Aucun paiement — 100% gratuit</span>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btnGoServer" onclick="goPage('server')" disabled>
+        <i class="fas fa-lock" id="lockIcon"></i> <span id="btnGoServerText">Collectionne 10 coins pour continuer</span>
+      </button>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PAGE 3 : SERVER ============ -->
+<div class="page" id="page-server">
+  <section class="server-section">
+    <div class="server-wrap">
+      <div class="server-card">
+        <div class="server-icon-big"><i class="fas fa-server"></i></div>
+        <h2>Créer ton Serveur</h2>
+        <p class="desc">Utilise tes <b style="color:var(--gold)">10 coins</b> pour lancer ton serveur HARLEY personnel. Configuration optimisée pour une connexion ultra-rapide à WhatsApp.</p>
+
+        <div class="server-config">
+          <div class="row"><span>🖥️  OS</span><span>Ubuntu 24.04 LTS</span></div>
+          <div class="row"><span>🌐  Navigateur</span><span>Chrome v24.0</span></div>
+          <div class="row"><span>⚡  Runtime</span><span>Node.js v20</span></div>
+          <div class="row"><span>📦  Lib</span><span>Baileys v6.7</span></div>
+          <div class="row"><span>🌍  Région</span><span>EU-WEST-1</span></div>
+          <div class="row"><span>💰  Coût</span><span>10 🪙 coins</span></div>
+        </div>
+
+        <div id="serverLockedMsg" class="locked" style="display:none;">
+          <i class="fas fa-lock"></i> Tu n'as pas encore 10 coins. <a onclick="goPage('coins')" style="color:var(--gold); cursor:pointer; text-decoration:underline;">Retour aux coins</a>
+        </div>
+
+        <button class="btn-primary" id="btnCreateServer" onclick="createServer()">
+          <i class="fas fa-bolt"></i> <span id="createServerText">Créer mon serveur (10 🪙)</span>
+        </button>
+
+        <div class="server-creation-log" id="serverLog"></div>
+
+        <div class="success-badge" id="serverSuccess">
+          <i class="fas fa-check-circle"></i> Serveur créé avec succès ! Tu peux maintenant générer ton code de pairage.
+        </div>
+
+        <button class="btn-primary" id="btnGoPair" onclick="goPage('pair')" style="display:none; margin-top:16px; background:linear-gradient(135deg, var(--green), #1a8c0a);">
+          <i class="fas fa-key"></i> Générer mon code de pairage
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PAGE 4 : PAIR CODE ============ -->
+<div class="page" id="page-pair">
+  <section class="hero">
+    <div class="hero-content">
+
+      <div class="hero-left">
+        <h1>HARLEY<br>QUINN BOT</h1>
+        <p class="subtitle">Ton bot WhatsApp multifonction signé <b>CABREL-TECH</b>.<br>Génère ton code de pairage en quelques secondes.</p>
+
+        <div class="badges">
+          <span class="badge"><i class="fas fa-bolt"></i> Ultra Rapide</span>
+          <span class="badge green"><i class="fas fa-shield-halved"></i> Sécurisé</span>
+          <span class="badge gold"><i class="fas fa-crown"></i> Version 1.0</span>
+          <span class="badge"><i class="fab fa-whatsapp"></i> WhatsApp</span>
+        </div>
+
+        <ul class="feature-list">
+          <li><i class="fas fa-check-circle"></i> Génération instantanée — Ubuntu Chrome v24.0</li>
+          <li><i class="fas fa-check-circle"></i> 50+ commandes (sticker, song, AI...)</li>
+          <li><i class="fas fa-check-circle"></i> Anti-link, anti-delete, modération avancée</li>
+          <li><i class="fas fa-check-circle"></i> Téléchargement TikTok, YouTube, Instagram</li>
+        </ul>
+      </div>
+
+      <div class="card" id="generate">
+        <div class="card-header">
+          <div class="icon-big"><i class="fab fa-whatsapp"></i></div>
+          <h2>Générer mon code</h2>
+          <p>Entre ton numéro WhatsApp pour obtenir ton code de pairage</p>
+        </div>
+
+        <div id="pairLockedMsg" class="locked" style="display:none;">
+          <i class="fas fa-lock"></i> Tu dois d'abord <a onclick="goPage('server')" style="color:var(--gold); cursor:pointer; text-decoration:underline;">créer ton serveur</a> pour générer un code.
+        </div>
+
+        <div class="server-tag" id="serverTag" style="display:none;">
+          <span class="dot"></span>
+          <span>SERVER ONLINE · UBUNTU 24.04 · CHROME v24.0</span>
+        </div>
+
+        <form id="pairForm">
+          <div class="input-group">
+            <label><i class="fas fa-phone"></i> Numéro WhatsApp</label>
+            <div class="phone-input">
+              <span class="prefix">🌍 <span id="cc">+237</span></span>
+              <input type="tel" id="phone" placeholder="6XXXXXXXX" required autocomplete="off" maxlength="15">
+            </div>
+          </div>
+
+          <div class="hint">
+            <i class="fas fa-lightbulb"></i>
+            <div>Saisis ton numéro <b>avec indicatif pays</b> (ex: 237, 33, 225...). Le numéro doit avoir WhatsApp activé.</div>
+          </div>
+
+          <button type="submit" class="btn-generate" id="btnGen" disabled>
+            <span class="btn-text"><i class="fas fa-key"></i> Obtenir mon code</span>
+            <span class="loader"><span></span><span></span><span></span></span>
+          </button>
+
+          <div class="error-msg" id="errorMsg"></div>
+        </form>
+
+        <div class="bot-log" id="botLog"></div>
+
+        <div class="result" id="result">
+          <div class="label">🃏 Ton code de pairage</div>
+          <div class="code" id="codeOut">XXXX-XXXX</div>
+          <button class="copy-btn" id="copyBtn"><i class="fas fa-copy"></i> Copier le code</button>
+          <div class="steps">
+            <b>📲 Comment l'utiliser :</b><br>
+            1. Ouvre <b>WhatsApp</b> sur ton téléphone<br>
+            2. Va dans <b>Paramètres → Appareils liés</b><br>
+            3. Tape sur <b>« Lier un appareil »</b><br>
+            4. Choisis <b>« Lier avec le numéro de téléphone »</b><br>
+            5. Entre le code ci-dessus ✨<br>
+            <span style="color:var(--green);">⚡ Bot exécuté sur Ubuntu Chrome v24.0 — connexion ultra-rapide</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-title">
+      <h2>Fonctionnalités</h2>
+      <p>Plus de 50 commandes au service de ta folie</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card"><div class="icon"><i class="fas fa-key"></i></div><h3>Pair Code</h3><p>Code unique pour lier ton WhatsApp en quelques secondes, sans QR code.</p></div>
+      <div class="feature-card"><div class="icon"><i class="fas fa-music"></i></div><h3>Téléchargement</h3><p>Audios, vidéos, films, TikTok, YouTube, Instagram, Facebook.</p></div>
+      <div class="feature-card"><div class="icon"><i class="fas fa-image"></i></div><h3>Stickers & AI</h3><p>Stickers depuis images/vidéos, images IA, texte → voix.</p></div>
+      <div class="feature-card"><div class="icon"><i class="fas fa-shield-halved"></i></div><h3>Modération</h3><p>Anti-link, anti-mention, anti-tag, anti-delete, ban, welcome.</p></div>
+      <div class="feature-card"><div class="icon"><i class="fas fa-gear"></i></div><h3>Personnalisation</h3><p>Change préfixe, mode, emojis. Adapte le bot à ton style.</p></div>
+      <div class="feature-card"><div class="icon"><i class="fas fa-bolt"></i></div><h3>Stable & Rapide</h3><p>Baileys v6, optimisé pour Katabump, Heroku, Replit, VPS.</p></div>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer id="about">
+  <div class="joker-mark">🃏 HARLEY SPACE 🃏</div>
+  <p>Bot WhatsApp <b>HARLEY QUINN BOTv1</b> — Tous droits réservés</p>
+  <p>Développé avec 💜 par <span class="dev">CABREL-TECH DEV-DIGITAL</span></p>
+  <div class="social">
+    <a href="#" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+    <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+    <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+    <a href="#" title="Telegram"><i class="fab fa-telegram"></i></a>
+  </div>
+  <p style="margin-top:18px; opacity:.5; font-size:11px;">© 2026 CABREL-TECH • Made in Cameroon 🇨🇲</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ====== STATE ====== */
+const state = {
+  coins: 0,
+  serverCreated: false,
+  serverId: null
+};
+
+/* ====== PAGE NAVIGATION ====== */
+function goPage(pageId){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + pageId);
+  if(target) target.classList.add('active');
+  window.scrollTo({ top:0, behavior:'smooth' });
+
+  // Lock pages conditionally
+  if(pageId === 'server'){
+    const locked = state.coins < 10;
+    document.getElementById('serverLockedMsg').style.display = locked ? 'block' : 'none';
+    document.getElementById('btnCreateServer').disabled = locked;
+  }
+  if(pageId === 'pair'){
+    const locked = !state.serverCreated;
+    document.getElementById('pairLockedMsg').style.display = locked ? 'block' : 'none';
+    document.getElementById('serverTag').style.display = locked ? 'none' : 'flex';
+    document.getElementById('btnGen').disabled = locked;
+  }
+}
+
+/* ====== TOAST ====== */
+const toast = document.getElementById('toast');
+function showToast(msg, color){
+  toast.textContent = msg;
+  toast.style.borderColor = color || '#39ff14';
+  toast.classList.add('show');
+  setTimeout(()=> toast.classList.remove('show'), 2500);
+}
+
+/* ====== COIN COLLECTION ====== */
+const bigCoin = document.getElementById('bigCoin');
+const coinBox = document.getElementById('coinBox');
+const coinCountEl = document.getElementById('coinCount');
+const progressCountEl = document.getElementById('progressCount');
+const progressFill = document.getElementById('progressFill');
+const btnGoServer = document.getElementById('btnGoServer');
+const btnGoServerText = document.getElementById('btnGoServerText');
+const lockIcon = document.getElementById('lockIcon');
+
+function collectCoin(e){
+  if(state.coins >= 10){
+    showToast('✅ Tu as déjà collecté 10 coins ! Crée ton serveur.', '#ffd166');
+    return;
+  }
+  state.coins++;
+  updateCoinUI();
+
+  // +1 floating animation
+  const plus = document.createElement('div');
+  plus.className = 'plus-one';
+  plus.textContent = '+1 🪙';
+  const rect = bigCoin.getBoundingClientRect();
+  const boxRect = coinBox.getBoundingClientRect();
+  plus.style.left = (rect.left - boxRect.left + rect.width/2 - 25 + (Math.random()*40-20)) + 'px';
+  plus.style.top = (rect.top - boxRect.top + 20) + 'px';
+  coinBox.appendChild(plus);
+  setTimeout(()=> plus.remove(), 1000);
+
+  bigCoin.classList.add('collected');
+  setTimeout(()=> bigCoin.classList.remove('collected'), 600);
+
+  if(state.coins === 10){
+    showToast('🎉 10 coins atteints ! Tu peux créer ton serveur.', '#39ff14');
+  }
+}
+
+function updateCoinUI(){
+  coinCountEl.textContent = state.coins;
+  progressCountEl.textContent = state.coins;
+  progressFill.style.width = (state.coins * 10) + '%';
+
+  if(state.coins >= 10){
+    btnGoServer.disabled = false;
+    btnGoServerText.textContent = 'Créer mon serveur →';
+    lockIcon.className = 'fas fa-server';
+  } else {
+    btnGoServer.disabled = true;
+    btnGoServerText.textContent = `Collectionne encore ${10 - state.coins} coin(s)`;
+    lockIcon.className = 'fas fa-lock';
+  }
+}
+
+/* ====== SERVER CREATION ====== */
+const serverLog = document.getElementById('serverLog');
+const serverSuccess = document.getElementById('serverSuccess');
+const btnCreateServer = document.getElementById('btnCreateServer');
+const createServerText = document.getElementById('createServerText');
+const btnGoPair = document.getElementById('btnGoPair');
+
+function logLine(container, html){
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = html;
+  container.appendChild(line);
+  container.scrollTop = container.scrollHeight;
+}
+
+async function createServer(){
+  if(state.coins < 10){
+    showToast('❌ Il te faut 10 coins.', '#e10a3b');
+    goPage('coins');
+    return;
+  }
+  if(state.serverCreated){
+    showToast('✅ Serveur déjà créé !', '#39ff14');
+    goPage('pair');
+    return;
+  }
+
+  btnCreateServer.disabled = true;
+  createServerText.textContent = 'Création en cours...';
+  serverLog.classList.add('show');
+  serverLog.innerHTML = '';
+
+  const steps = [
+    { t: 300, html: '<span class="tag">[INIT]</span> Déduction de 10 🪙 coins...' },
+    { t: 600, html: '<span class="tag">[OK]</span>  Coins validés ✓' },
+    { t: 900, html: '<span class="info">[BOOT]</span> Démarrage du conteneur Ubuntu 24.04 LTS...' },
+    { t: 1400, html: '<span class="info">[LOAD]</span> Installation de Node.js v20...' },
+    { t: 1900, html: '<span class="info">[LOAD]</span> Installation de Chrome v24.0...' },
+    { t: 2400, html: '<span class="info">[LOAD]</span> Configuration Baileys v6.7...' },
+    { t: 2900, html: '<span class="info">[NET]</span>  Allocation IP : 51.91.xxx.xxx (EU-WEST-1)' },
+    { t: 3300, html: '<span class="tag">[READY]</span> Serveur opérationnel ✓' },
+    { t: 3700, html: '<span class="tag">[SUCCESS]</span> ✨ Serveur HARLEY créé avec succès ! ✨' }
+  ];
+
+  steps.forEach(s => setTimeout(() => logLine(serverLog, s.html), s.t));
+
+  setTimeout(() => {
+    // Deduct coins
+    state.coins = 0;
+    state.serverCreated = true;
+    state.serverId = 'HRLY-' + Math.random().toString(36).slice(2,8).toUpperCase();
+    updateCoinUI();
+
+    serverSuccess.classList.add('show');
+    serverSuccess.innerHTML = `<i class="fas fa-check-circle"></i> Serveur <b>${state.serverId}</b> créé avec succès ! Ubuntu Chrome v24.0 actif.`;
+    btnGoPair.style.display = 'inline-flex';
+    btnCreateServer.style.display = 'none';
+    showToast('🎉 Serveur créé avec succès !', '#39ff14');
+  }, 4000);
+}
+
+/* ====== PAIR CODE GENERATION ====== */
+const form = document.getElementById('pairForm');
+const phone = document.getElementById('phone');
+const btn = document.getElementById('btnGen');
+const btnText = btn.querySelector('.btn-text');
+const loader = btn.querySelector('.loader');
+const result = document.getElementById('result');
+const codeOut = document.getElementById('codeOut');
+const copyBtn = document.getElementById('copyBtn');
+const errorMsg = document.getElementById('errorMsg');
+const botLog = document.getElementById('botLog');
+
+function showError(msg){
+  errorMsg.textContent = msg;
+  errorMsg.classList.add('show');
+  setTimeout(()=> errorMsg.classList.remove('show'), 5000);
+}
+
+function generatePairCode(){
+  // Format: XXXX-XXXX (alphanumeric uppercase)
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for(let i=0; i<8; i++){
+    if(i === 4) code += '-';
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  if(!state.serverCreated){
+    showError('❌ Tu dois d\'abord créer ton serveur.');
+    setTimeout(()=> goPage('server'), 1500);
+    return;
+  }
+
+  errorMsg.classList.remove('show');
+  result.classList.remove('show');
+  botLog.classList.remove('show');
+  botLog.innerHTML = '';
+
+  let num = phone.value.replace(/\D/g, '');
+  if(!num || num.length < 8){
+    showError('❌ Numéro invalide. Entre ton numéro avec indicatif pays (ex: 2376xxxxxxxx).');
+    return;
+  }
+
+  btn.disabled = true;
+  btnText.style.display = 'none';
+  loader.classList.add('show');
+  botLog.classList.add('show');
+
+  const logs = [
+    { t: 200, html: '<span class="tag">[BOT]</span> Connexion au serveur ' + state.serverId + '...' },
+    { t: 600, html: '<span class="ubuntu">[UBUNTU 24.04]</span> Lancement du runtime...' },
+    { t: 1000, html: '<span class="chrome">[CHROME v24.0]</span> Initialisation du navigateur...' },
+    { t: 1400, html: '<span class="tag">[BAILEYS]</span> Connexion WhatsApp pour +' + num + '...' },
+    { t: 1900, html: '<span class="tag">[REQ]</span> Génération du pair code...' },
+    { t: 2400, html: '<span class="tag">[OK]</span>  Code prêt — connexion ultra-rapide ✓' }
+  ];
+  logs.forEach(l => setTimeout(() => logLine(botLog, l.html), l.t));
+
+  setTimeout(() => {
+    const code = generatePairCode();
+    codeOut.textContent = code;
+    result.classList.add('show');
+    result.scrollIntoView({ behavior:'smooth', block:'center' });
+    showToast('✅ Code généré avec succès !');
+    btn.disabled = false;
+    btnText.style.display = 'inline-flex';
+    loader.classList.remove('show');
+  }, 2800);
+});
+
+copyBtn.addEventListener('click', () => {
+  const code = codeOut.textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    showToast('📋 Code copié dans le presse-papier !');
+    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copié !';
+    setTimeout(() => copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copier le code', 2000);
+  });
+});
+
+// Auto-detect country code
+phone.addEventListener('input', (e) => {
+  let v = e.target.value.replace(/\D/g, '');
+  e.target.value = v;
+  const cc = document.getElementById('cc');
+  if(v.startsWith('237')) cc.textContent = '+237';
+  else if(v.startsWith('33')) cc.textContent = '+33';
+  else if(v.startsWith('225')) cc.textContent = '+225';
+  else if(v.startsWith('221')) cc.textContent = '+221';
+  else if(v.startsWith('243')) cc.textContent = '+243';
+  else if(v.startsWith('241')) cc.textContent = '+241';
+  else if(v.startsWith('1')) cc.textContent = '+1';
+  else if(v.startsWith('44')) cc.textContent = '+44';
+  else cc.textContent = '+???';
+});
+
+/* Init */
+updateCoinUI();
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
